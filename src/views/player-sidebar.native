@@ -36,13 +36,13 @@
               <use template="section-label" title="RECENT"/>
               <column gap="0">
                 <for each="recents_list" key="url" as="st">
-                  <row on-press="pick_recent:{st.url}" gap="12" cross="center" padding="9" label="{st.name}">
+                  <list-item on-press="pick_recent:{st.url}" gap="12" cross="center" padding="9" label="{st.name}">
                     <column gap="1" grow="1">
                       <text><span weight="medium">{st.name}</span></text>
                       <text size="sm" foreground="text_muted" wrap="false" overflow="ellipsis">{st.url}</text>
                     </column>
                     <button variant="ghost" size="sm" icon="x" label="Remove station" on-press="forget_recent:{st.url}"/>
-                  </row>
+                  </list-item>
                   <separator/>
                 </for>
               </column>
@@ -51,13 +51,13 @@
               <use template="section-label" title="DISCOVER"/>
               <column gap="0">
                 <for each="discover_list" key="url" as="st">
-                  <row on-press="pick_discover:{st.url}" gap="12" cross="center" padding="9" label="{st.name}">
+                  <list-item on-press="pick_discover:{st.url}" gap="12" cross="center" padding="9" label="{st.name}">
                     <column gap="2" grow="1">
                       <text><span weight="medium">{st.name}</span></text>
                       <text size="sm" foreground="text_muted" wrap="false" overflow="ellipsis">{st.sub}</text>
                     </column>
                     <icon name="chevron-right" width="14" height="14" foreground="text_muted"/>
-                  </row>
+                  </list-item>
                   <separator/>
                 </for>
               </column>

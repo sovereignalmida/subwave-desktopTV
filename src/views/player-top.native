@@ -3,11 +3,10 @@
   <!-- Masthead — the working titlebar (window-drag under hidden_inset_tall) -->
   <row cross="center" gap="12" height="52" padding="8" window-drag="true">
     <spacer width="{chrome_leading}"/>
-    <row on-press="toggle_sidebar" gap="7" cross="center" label="Stations">
-      <icon name="app:logo" width="16" height="16" foreground="accent"/>
-      <text size="sm">{upper(station_name)}</text>
-      <icon name="chevron-down" width="13" height="13" foreground="text_muted"/>
-    </row>
+    <stack>
+      <button variant="ghost" size="sm" icon="app:logo" label="Stations" on-press="toggle_sidebar">{upper(station_name)}</button>
+      <tooltip anchor="below">Stations · Cmd/Ctrl+K</tooltip>
+    </stack>
     <if test="{has_show}">
       <text size="sm" foreground="text_muted" wrap="false" overflow="ellipsis">{show_upper}</text>
     </if>

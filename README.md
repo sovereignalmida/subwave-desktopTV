@@ -1,12 +1,29 @@
-# subwave-desktop
+# subwave-desktopTV
 
-A native desktop player for the [SUB/WAVE](https://www.getsubwave.com) internet
-radio station, built on the **Vercel Native SDK** — declarative `.native` markup
-+ Zig logic, drawn by the SDK's own engine (no browser, no WebView). Separate
-repo from the main `subwave` monorepo; it tracks the same station HTTP API.
-MIT licensed; [prebuilt downloads for macOS, Windows and
-Linux](https://github.com/getsubwave/subwave-desktop/releases/latest) are on
-the releases page.
+**A fork of [getsubwave/subwave-desktop](https://github.com/getsubwave/subwave-desktop)**
+by the SUB/WAVE team — all the hard work (the Zig app, the Native SDK
+integration, the whole player) is theirs. This fork only adds a "10-foot"
+couch layer on top; upstream remains the place to go for the desktop player
+itself, and their [releases](https://github.com/getsubwave/subwave-desktop/releases/latest)
+still ship prebuilt macOS, Windows and Linux builds. MIT licensed, same as
+upstream — see [LICENSE](LICENSE).
+
+**What this fork is for:** running a self-hosted SUB/WAVE station on a living
+room HTPC — specifically a [Bazzite](https://bazzite.gg) box launched from
+Steam Gaming Mode as a non-Steam shortcut, driven entirely from a game
+controller mapped to keystrokes via Steam Input. That means no mouse, no
+keyboard, and no pointer of any kind: every surface has to be reachable by
+keyboard focus alone, from a couch, at TV viewing distance.
+
+Upstream already ships most of the transport for this — space, arrows, `M`,
+`L`, `Esc`, `1`–`5` and Tab traversal all work. The gap this fork closes is
+keyboard reachability for the parts still built as pointer-only targets (most
+notably the station switcher list). Changes here are kept narrow and
+rebase-friendly so they can be offered back upstream.
+
+It is still the same app underneath: declarative `.native` markup + Zig logic,
+drawn by the SDK's own engine — no browser, no WebView — tracking the same
+station HTTP API.
 
 ![The SUB/WAVE desktop player on the BOOTH stop: now playing with cover art and
 track metadata on the left, the booth feed of DJ picks, voice lines and played

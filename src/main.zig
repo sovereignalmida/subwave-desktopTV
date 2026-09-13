@@ -59,7 +59,8 @@ pub const app_icons = [_]canvas.icons.Entry{
 // ------------------------------------------------------- OS integration seams
 // App-level key fallback — consulted only for keys no focused widget consumed
 // (typing in the request/station fields is never stolen). Space = tune toggle,
-// P = play/pause too (focus-proof), [ / ] = volume, M = mute,
+// P = play/pause too (focus-proof), [ / ] = volume, M = mute, Delete = back,
+// ctrl+1 = home (straight to LIVE), F11 = timeline,
 // cmd/ctrl+K = stations, cmd/ctrl+shift+M = mini
 // player (plain cmd+M is the macOS system minimize), Esc = back to LIVE,
 // 1–5 = dial stops.
@@ -81,6 +82,8 @@ fn onKey(keyboard: canvas.WidgetKeyboardEvent) ?Msg {
     if (mods.super or mods.control) {
         if (!mods.alt and !mods.shift and std.ascii.eqlIgnoreCase(key, "k")) return .toggle_sidebar;
         if (!mods.alt and mods.shift and std.ascii.eqlIgnoreCase(key, "m")) return .toggle_mini;
+        // Ctrl+1 is Home on shared HTPC remote profiles (Plex HTPC, VacuumTube).
+        if (!mods.alt and !mods.shift and std.mem.eql(u8, key, "1")) return .go_home;
         return null;
     }
     if (mods.alt) return null;
@@ -95,6 +98,10 @@ fn onKey(keyboard: canvas.WidgetKeyboardEvent) ?Msg {
     if (std.ascii.eqlIgnoreCase(key, "m")) return .toggle_mute;
     if (std.ascii.eqlIgnoreCase(key, "l")) return .press_like;
     if (std.ascii.eqlIgnoreCase(key, "escape")) return .escape;
+    // HTPC remote conventions: Back is commonly programmed as Delete, and the
+    // info button as F11. A focused text field still claims Delete first.
+    if (std.ascii.eqlIgnoreCase(key, "delete")) return .escape;
+    if (std.ascii.eqlIgnoreCase(key, "f11")) return .{ .pick_tab = .timeline };
     if (key.len == 1) {
         switch (key[0]) {
             '1' => return .{ .pick_tab = .schedule },
@@ -588,6 +595,10 @@ test "key fallback maps transport, navigation, and dial keys" {
     try testing.expect(onKey(.{ .phase = .key_down, .key = "M" }).? == .toggle_mute);
     try testing.expect(onKey(.{ .phase = .key_down, .key = "L" }).? == .press_like);
     try testing.expect(onKey(.{ .phase = .key_down, .key = "Escape" }).? == .escape);
+    try testing.expect(onKey(.{ .phase = .key_down, .key = "delete" }).? == .escape);
+    try testing.expectEqual(Msg{ .pick_tab = .timeline }, onKey(.{ .phase = .key_down, .key = "f11" }).?);
+    try testing.expect(onKey(.{ .phase = .key_down, .key = "1", .modifiers = .{ .control = true } }).? == .go_home);
+    try testing.expectEqual(Msg{ .pick_tab = .schedule }, onKey(.{ .phase = .key_down, .key = "1" }).?);
     try testing.expect(onKey(.{ .phase = .key_down, .key = "k", .modifiers = .{ .super = true } }).? == .toggle_sidebar);
     try testing.expect(onKey(.{ .phase = .key_down, .key = "m", .modifiers = .{ .control = true, .shift = true } }).? == .toggle_mini);
     try testing.expect(onKey(.{ .phase = .key_down, .key = "M", .modifiers = .{ .super = true, .shift = true } }).? == .toggle_mini);

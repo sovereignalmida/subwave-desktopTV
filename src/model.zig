@@ -1462,6 +1462,7 @@ pub const Msg = union(enum) {
     close_panel,
     toggle_sidebar,
     toggle_add_station,
+    go_home,
     escape,
     open_panel,
     open_sleep,
@@ -1544,7 +1545,7 @@ pub const Msg = union(enum) {
         "got_directory", "got_beacon",     "got_ob_health", "got_ob_dj",
         "got_like_status", "got_like_post",
         "audio_event",   "saved",          "got_schedule", "tick_save",
-        "chrome_changed", "toggle_play",   "vol_up",      "vol_down",
+        "chrome_changed", "go_home", "toggle_play",   "vol_up",      "vol_down",
         "escape",        "mini_closed",    "tune_out",    "toggle_mini",
         "sleep_cycle",   "open_timeline",  "open_booth",
         "discord_line",  "discord_exited", "tick_discord_retry",
@@ -3048,6 +3049,14 @@ pub fn update(model: *Model, msg: Msg, fx: *Effects) void {
             if (model.sidebar_open) fetchDirectory(fx); // refresh Discover
         },
         .toggle_add_station => model.add_station_open = !model.add_station_open,
+        // A remote's Home: one press straight back to the LIVE stage from
+        // anywhere, unlike .escape which peels one layer per press.
+        .go_home => {
+            model.sheet = .none;
+            model.sidebar_open = false;
+            model.add_station_open = false;
+            model.active_tab = .live;
+        },
         .escape => {
             if (model.sheet != .none) {
                 model.sheet = .none;
@@ -3608,6 +3617,22 @@ test "mute preserves the intended volume; a volume nudge unmutes" {
     try testing.expect(!m.muted);
     try testing.expect(m.volume > 0.65);
     try testing.expectEqualStrings("70%", m.vol_display(arena));
+}
+
+test "go_home closes every layer and lands on LIVE in one press" {
+    var fx = Effects.init(testing.allocator);
+    defer fx.deinit();
+    fx.executor = .fake;
+    var m: Model = .{};
+    m.sheet = .panel;
+    m.sidebar_open = true;
+    m.add_station_open = true;
+    m.active_tab = .booth;
+    update(&m, .go_home, &fx);
+    try testing.expectEqual(Sheet.none, m.sheet);
+    try testing.expect(!m.sidebar_open);
+    try testing.expect(!m.add_station_open);
+    try testing.expectEqual(Tab.live, m.active_tab);
 }
 
 test "the volume sync adopts a real drag but never clobbers a model-side nudge" {

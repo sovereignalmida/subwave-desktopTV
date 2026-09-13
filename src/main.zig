@@ -59,7 +59,8 @@ pub const app_icons = [_]canvas.icons.Entry{
 // ------------------------------------------------------- OS integration seams
 // App-level key fallback — consulted only for keys no focused widget consumed
 // (typing in the request/station fields is never stolen). Space = tune toggle,
-// [ / ] = volume, M = mute, cmd/ctrl+K = stations, cmd/ctrl+shift+M = mini
+// P = play/pause too (focus-proof), [ / ] = volume, M = mute,
+// cmd/ctrl+K = stations, cmd/ctrl+shift+M = mini
 // player (plain cmd+M is the macOS system minimize), Esc = back to LIVE,
 // 1–5 = dial stops.
 //
@@ -83,7 +84,12 @@ fn onKey(keyboard: canvas.WidgetKeyboardEvent) ?Msg {
         return null;
     }
     if (mods.alt) return null;
+    // Space only reaches here when nothing holds focus - a focused widget
+    // claims activation keys first, so on a remote or pad Space presses
+    // whatever is focused instead of pausing. P is claimed by no widget, so
+    // it is the one binding that always means play/pause.
     if (std.ascii.eqlIgnoreCase(key, "space")) return .toggle_play;
+    if (std.ascii.eqlIgnoreCase(key, "p")) return .toggle_play;
     if (std.mem.eql(u8, key, "]")) return .vol_up;
     if (std.mem.eql(u8, key, "[")) return .vol_down;
     if (std.ascii.eqlIgnoreCase(key, "m")) return .toggle_mute;
@@ -572,6 +578,8 @@ const testing = std.testing;
 
 test "key fallback maps transport, navigation, and dial keys" {
     try testing.expect(onKey(.{ .phase = .key_down, .key = "space" }).? == .toggle_play);
+    try testing.expect(onKey(.{ .phase = .key_down, .key = "P" }).? == .toggle_play);
+    try testing.expect(onKey(.{ .phase = .key_down, .key = "p" }).? == .toggle_play);
     try testing.expect(onKey(.{ .phase = .key_down, .key = "]" }).? == .vol_up);
     try testing.expect(onKey(.{ .phase = .key_down, .key = "[" }).? == .vol_down);
     // Arrows belong to the SDK's spatial focus movement, not to volume.

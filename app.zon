@@ -23,8 +23,12 @@
             .{
                 .label = "main",
                 .title = "SUBWAVE",
-                .width = 980,
-                .height = 660,
+                // 16:9 so a TV-scaling compositor (gamescope in Steam Gaming
+                // Mode) fills the screen instead of letterboxing. Upstream's
+                // 980x660 is ~1.49:1. Keep in sync with main.zig's
+                // window_width/window_height.
+                .width = 1920,
+                .height = 1080,
                 .min_width = 880,
                 .min_height = 560,
                 .titlebar = "hidden_inset_tall",

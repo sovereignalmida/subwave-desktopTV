@@ -23,8 +23,10 @@ const geometry = native_sdk.geometry;
 pub const bundle_id = "dev.subwave.player";
 
 const canvas_label = "main-canvas";
-const window_width: f32 = 980;
-const window_height: f32 = 660;
+// 16:9 for TV scaling under gamescope - see app.zon, which is authoritative
+// for the startup window and must match.
+const window_width: f32 = 1920;
+const window_height: f32 = 1080;
 
 // Re-exports for tests.zig.
 pub const Model = model.Model;

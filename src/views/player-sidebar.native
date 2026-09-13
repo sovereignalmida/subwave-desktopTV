@@ -62,16 +62,18 @@
                 </for>
               </column>
             </if>
-            <use template="section-label" title="ADD A STATION"/>
-            <row gap="8" cross="center">
-              <search-field text="{station_text}" placeholder="radio.yourhost.com" on-input="station_edit" on-submit="tune_station" grow="1"/>
-              <stack>
-                <button variant="secondary" icon="plus" label="Tune to this station" on-press="tune_station"/>
-                <tooltip anchor="above">Tune to this station</tooltip>
-              </stack>
-            </row>
-            <if test="{station_status}">
-              <text size="sm" foreground="accent">{station_status}</text>
+            <button variant="ghost" size="sm" icon="plus" label="Add a station" on-press="toggle_add_station">ADD A STATION</button>
+            <if test="{add_station_open}">
+              <row gap="8" cross="center">
+                <search-field text="{station_text}" placeholder="radio.yourhost.com" on-input="station_edit" on-submit="tune_station" grow="1"/>
+                <stack>
+                  <button variant="secondary" icon="plus" label="Tune to this station" on-press="tune_station"/>
+                  <tooltip anchor="above">Tune to this station</tooltip>
+                </stack>
+              </row>
+              <if test="{station_status}">
+                <text size="sm" foreground="accent">{station_status}</text>
+              </if>
             </if>
           </column>
         </scroll>

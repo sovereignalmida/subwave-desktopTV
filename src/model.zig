@@ -332,6 +332,11 @@ pub const Model = struct {
     // ------------------------------------------------------------- UI state
     active_tab: Tab = .live,
     sidebar_open: bool = false,
+    // ADD A STATION is collapsed by default. The search field inside it is
+    // focusable and swallows Escape (the SDK's clear-the-field intent), which
+    // on a controller is a dead end with no visible way out. Behind a
+    // disclosure it stays out of focus traversal until deliberately opened.
+    add_station_open: bool = false,
     sheet: Sheet = .none,
     mini_open: bool = false,
 
@@ -1456,6 +1461,7 @@ pub const Msg = union(enum) {
     open_booth,
     close_panel,
     toggle_sidebar,
+    toggle_add_station,
     escape,
     open_panel,
     open_sleep,
@@ -3041,6 +3047,7 @@ pub fn update(model: *Model, msg: Msg, fx: *Effects) void {
             model.sidebar_open = !model.sidebar_open;
             if (model.sidebar_open) fetchDirectory(fx); // refresh Discover
         },
+        .toggle_add_station => model.add_station_open = !model.add_station_open,
         .escape => {
             if (model.sheet != .none) {
                 model.sheet = .none;

@@ -419,7 +419,7 @@ fn syncModel(m: *Model, layout: canvas.WidgetLayoutTree) void {
     for (layout.nodes) |node| {
         if (node.widget.kind != .slider) continue;
         if (std.mem.eql(u8, node.widget.semantics.label, "Volume")) {
-            m.volume = std.math.clamp(node.widget.value, 0.0, 1.0);
+            m.reconcileVolumeFromWidget(node.widget.value);
         }
     }
 }
